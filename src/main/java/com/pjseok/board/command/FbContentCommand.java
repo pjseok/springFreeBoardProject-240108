@@ -1,17 +1,17 @@
 package com.pjseok.board.command;
 
-import java.util.ArrayList;
 
 import com.pjseok.board.dao.FreeBoardDao;
 import com.pjseok.board.dto.FboardDto;
 
-public class FbListCommand {
+public class FbContentCommand {
 	
-	public ArrayList<FboardDto> execute() {
-		FreeBoardDao freeBoardDao = new FreeBoardDao();
-		ArrayList<FboardDto> dtos = freeBoardDao.list();
+	public FboardDto execute(String fbnum) {
 		
-		return dtos;
-	}
-	
+		FreeBoardDao freeBoardDao = new FreeBoardDao();
+		FboardDto fboardDto = freeBoardDao.content_view(fbnum);
+		
+		return fboardDto;
+	} 
+
 }

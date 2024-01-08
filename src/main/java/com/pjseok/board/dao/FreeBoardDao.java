@@ -22,60 +22,61 @@ public class FreeBoardDao {
 		super();
 		// TODO Auto-generated constructor stub
 		Context context;
-	      try {
-	         context = new InitialContext();
-	         dataSource = (DataSource) context.lookup("java:comp/env/jdbc/oracledb");
-	      } catch (Exception e) {
-	         // TODO Auto-generated catch block
-	         e.printStackTrace();
-	      }
-		
+		try {
+			context = new InitialContext();
+			dataSource = (DataSource) context.lookup("java:comp/env/jdbc/oracledb");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public void write (String fbtitle, String fbname, String fbcontent) {
-			Connection conn = null;
-	      // Statement stmt = null;
-	      PreparedStatement pstmt = null;
-	      
-	      try {
-	         conn = dataSource.getConnection();
-	         String sql = "INSERT INTO freeboard(fbnum, fbtitle, fbname, fbcontent, fbhit) VALUES (freeboard_seq.nextval, ?, ?, ?, 0)";
-	         
-	         pstmt = conn.prepareStatement(sql);
-	         
-	         pstmt.setString(1, fbtitle);
-	         pstmt.setString(2, fbname);
-	         pstmt.setString(3, fbcontent);         
-	         
-	         pstmt.executeUpdate();
-	         
-	      } catch (Exception e) {
-	         // TODO Auto-generated catch block
-	         e.printStackTrace();
-	      } finally {
-	         try {
-	            if(pstmt != null) {
-	               pstmt.close();
-	            }
-	            if(conn != null) {
-	               conn.close();
-	            }
-	         } catch(Exception e) {
-	            e.printStackTrace();
-	         }
-	      }
+	public void write(String fbtitle, String fbname, String fbcontent) {
+		Connection conn = null;
+		// Statement stmt = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn = dataSource.getConnection();
+			String sql = "INSERT INTO freeboard(fbnum, fbtitle, fbname, fbcontent, fbhit) VALUES (freeboard_seq.nextval, ?, ?, ?, 0)";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, fbtitle);
+			pstmt.setString(2, fbname);
+			pstmt.setString(3, fbcontent);			
+			
+			pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pstmt != null) {
+					pstmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public ArrayList<FboardDto> list() {
-		Connection conn = null;
+		
+		Connection conn = null; 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		ArrayList<FboardDto> dtos = new ArrayList<FboardDto>();
+		
 		try {
 			conn = dataSource.getConnection();
-			String sql = "SELECT * FROM freeboard";
-			
+			String sql = "SELECT * FROM freeboard ORDER BY fbnum DESC";
+			// 내림차순으로 정렬된 모든 데이터 요청
 			pstmt = conn.prepareStatement(sql);
 			
 			rs = pstmt.executeQuery();
@@ -86,10 +87,9 @@ public class FreeBoardDao {
 				int fbnum = rs.getInt("fbnum");
 				String fbname = rs.getString("fbname");
 				String fbtitle = rs.getString("fbtitle");
-				String fbcontent = rs.getString("fcontent");
+				String fbcontent = rs.getString("fbcontent");
 				int fbhit = rs.getInt("fbhit");
 				Timestamp fbdate = rs.getTimestamp("fbdate");
-				
 				
 				FboardDto fboardDto = new FboardDto();
 				
@@ -105,19 +105,19 @@ public class FreeBoardDao {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}finally {
+		} finally {
 			try {
-				if(rs != null){
+				if(rs != null) {
 					rs.close();
 				}
-				if(pstmt != null){
+				if(pstmt != null) {
 					pstmt.close();
 				}
-				if(conn != null){
+				if(conn != null) {
 					conn.close();
 				}
 				
-			}catch(Exception e){
+			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -125,5 +125,65 @@ public class FreeBoardDao {
 		return dtos;
 	}
 	
+	public FboardDto content_view(String clickNum) {
+		
+		Connection conn = null; 
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		//ArrayList<FboardDto> dtos = new ArrayList<FboardDto>();
+		FboardDto fboardDto = null;
+		
+		try {
+			conn = dataSource.getConnection();
+			String sql = "SELECT * FROM freeboard WHERE fbnum = ?";
+			// 내림차순으로 정렬된 모든 데이터 요청
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, clickNum);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) { // 다음 레코드가 있으면 참, 아니면 거짓
+				int fbnum = rs.getInt("fbnum");
+				String fbname = rs.getString("fbname");
+				String fbtitle = rs.getString("fbtitle");
+				String fbcontent = rs.getString("fbcontent");
+				int fbhit = rs.getInt("fbhit");
+				Timestamp fbdate = rs.getTimestamp("fbdate");
+				
+				fboardDto = new FboardDto(fbnum, fbname, fbtitle, fbcontent, fbhit, fbdate);
+				
+//				fboardDto.setFbnum(fbnum);
+//				fboardDto.setFbname(fbname);
+//				fboardDto.setFbtitle(fbtitle);
+//				fboardDto.setFbcontent(fbcontent);
+//				fboardDto.setFbhit(fbhit);
+//				fboardDto.setFbdate(fbdate);
+				
+//				dtos.add(fboardDto);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) {
+					rs.close();
+				}
+				if(pstmt != null) {
+					pstmt.close();
+				}
+				if(conn != null) {
+					conn.close();
+				}
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return fboardDto;
+	}
 	
 }
