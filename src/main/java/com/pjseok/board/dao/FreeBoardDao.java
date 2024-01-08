@@ -2,10 +2,16 @@ package com.pjseok.board.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+
+import com.pjseok.board.dto.FboardDto;
 
 public class FreeBoardDao {
 	
@@ -27,7 +33,7 @@ public class FreeBoardDao {
 	}
 	
 	public void write (String fbtitle, String fbname, String fbcontent) {
-		Connection conn = null;
+			Connection conn = null;
 	      // Statement stmt = null;
 	      PreparedStatement pstmt = null;
 	      
@@ -60,6 +66,64 @@ public class FreeBoardDao {
 	      }
 	}
 	
+	public ArrayList<FboardDto> list() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		ArrayList<FboardDto> dtos = new ArrayList<FboardDto>();
+		try {
+			conn = dataSource.getConnection();
+			String sql = "SELECT * FROM freeboard";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			dtos = new ArrayList<FboardDto>();
+			
+			while(rs.next()) { // 다음 레코드가 있으면 참, 아니면 거짓
+				int fbnum = rs.getInt("fbnum");
+				String fbname = rs.getString("fbname");
+				String fbtitle = rs.getString("fbtitle");
+				String fbcontent = rs.getString("fcontent");
+				int fbhit = rs.getInt("fbhit");
+				Timestamp fbdate = rs.getTimestamp("fbdate");
+				
+				
+				FboardDto fboardDto = new FboardDto();
+				
+				fboardDto.setFbnum(fbnum);
+				fboardDto.setFbname(fbname);
+				fboardDto.setFbtitle(fbtitle);
+				fboardDto.setFbcontent(fbcontent);
+				fboardDto.setFbhit(fbhit);
+				fboardDto.setFbdate(fbdate);
+				
+				dtos.add(fboardDto);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null){
+					rs.close();
+				}
+				if(pstmt != null){
+					pstmt.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+				
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+		}
+		
+		return dtos;
+	}
 	
 	
 }
