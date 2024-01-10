@@ -8,27 +8,19 @@ import org.springframework.ui.Model;
 
 import com.pjseok.board.dao.FreeBoardDao;
 
-public class FbWriteCommand implements fbCommand {
+public class FbModifyCommand implements fbCommand {
 	
-//	public void execute(String fbtitle, String fbname, String fbcontent) {
-//		
-//		FreeBoardDao freeBoardDao = new FreeBoardDao();
-//		
-//		freeBoardDao.write(fbtitle, fbname, fbcontent);
-//	}
 	public void execute(Model model) {
 		
-		// model에서 request 객체 분리해서 가져오기
 		Map<String, Object> requestMap = model.asMap();
 		HttpServletRequest request = (HttpServletRequest) requestMap.get("request");
 		
+		String fbnum = request.getParameter("fbnum");
 		String fbtitle = request.getParameter("fbtitle");
 		String fbname = request.getParameter("fbname");
 		String fbcontent = request.getParameter("fbcontent");
-		
-		
-		FreeBoardDao freeBoardDao = new FreeBoardDao();
-		
-		freeBoardDao.write(fbtitle, fbname, fbcontent);
+			
+		FreeBoardDao freeBoardDao = new FreeBoardDao();		
+		freeBoardDao.modify(fbtitle, fbname, fbcontent, fbnum);
 	}
 }

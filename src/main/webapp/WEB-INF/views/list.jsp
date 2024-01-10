@@ -10,6 +10,10 @@
 <body>
 	<h2>자유게시판 글목록</h2>
 	<hr>
+	<form action="search">
+		<input type="text" name = "searchKey">
+		<input type="submit" value= "검색">
+	</form>
 	<table border="1" cellspacing="0" cellpadding="0" width="1000">
 		<tr>
 			<th>번 호</th>
