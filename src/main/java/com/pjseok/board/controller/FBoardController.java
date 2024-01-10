@@ -138,7 +138,7 @@ public class FBoardController {
 		command = new FbSearchCommand();
 		command.execute(model);
 		
-		return "search_list";
+		return "list";
 		
 	}
 		
