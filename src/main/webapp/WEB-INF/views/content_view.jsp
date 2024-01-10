@@ -9,7 +9,7 @@
 <body>
 	<h2>글 내용 보기</h2>
 	<hr>
-	<table border="1" cellspacing = "0" cellpadding = "0">
+	<table border="1" cellspacing = "0" cellpadding = "0" width="600">
 		<tr>
 			<th witdh = "100">번 호</th>
 			<td>${fboardDto.fbnum }</td>
